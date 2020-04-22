@@ -15,6 +15,7 @@ from model import MorphNetModel
 from utils import set_reproducible_environment, select_keras_base_model, train_epoch, validate_epoch
 
 from keras import backend as K
+import numpy as np
 
 tf.compat.v1.disable_eager_execution()
 tf.disable_eager_execution()
@@ -165,8 +166,11 @@ def main():
     valid = grayscale_to_rgb(x_valid)
     x_valid = valid.eval(session=tf.compat.v1.Session())
 
-    print("Shape x_train after conversion: ", x_train)
-    print("Shape x_eval after conversion: ", x_valid)
+    x_train = np.pad(x_train, ((0, 0), (2, 2), (2, 2), (0,0)), 'constant', constant_values=(0.))
+    x_valid = np.pad(x_valid, ((0, 0), (2, 2), (2, 2), (0, 0)), 'constant', constant_values=(0.))
+
+    #print("Shape x_train after conversion: ", x_train)
+    #print("Shape x_eval after conversion: ", x_valid)
 
     base_model = select_keras_base_model(base_model_name=base_model_name)
     morphnet_regularization_strength_dummy = 1e-9
